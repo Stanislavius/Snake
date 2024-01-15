@@ -1,0 +1,9 @@
+
+.idea/misc.xml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/modules.xml
+.idea/Snake.iml
+Snake/__pycache__/__init__.cpython-311.pyc
+Snake/__pycache__/settings.cpython-311.pyc
+Snake/__pycache__/urls.cpython-311.pyc
+Snake/__pycache__/wsgi.cpython-311.pyc
