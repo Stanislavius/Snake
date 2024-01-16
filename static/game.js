@@ -11,6 +11,7 @@ const height = canvas.height;
 const size = 20;
 const cells_width = Math.floor(width / size);
 const cells_height = Math.floor(height / size);
+const label = document.getElementById('infoLabel');
 
 let head = {
     x: 1 + getRandomInt(cells_width - 2),
@@ -101,7 +102,8 @@ async function main_loop(){
         }
 
         if (head.x < 0 | head.x >= cells_width | head.y < 0 | head.y >= cells_height){
-            console.log("Game over");
+            label.innerText = "Game over, your score is " + (body.length + 1);
+            console.log("Game over, outside game field");
             return;
         }
         if (body.length == 0){
@@ -148,10 +150,12 @@ async function main_loop(){
             });
             //change size, check if not collisions, check to gen not inside of snake
             timeOut = timeOut * 0.95;
+            label.innerText = "Your score is " + (body.length + 1);
         }
         for (const element of body) {
                 if (element.x == head.x && element.y == head.y){
                 console.log("Game over, collide with body");
+                label.innerText = "Game over, your score is " + (body.length + 1);
                 console.log(body);
                 console.log(head);
                 return;
