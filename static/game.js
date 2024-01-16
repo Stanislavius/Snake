@@ -18,6 +18,7 @@ let food = {
     y: size + getRandomInt(height- 2 * size)
 };
 
+
 const Direction = {
   Up: 'Up',
   Down: 'Down',
@@ -28,6 +29,20 @@ const Direction = {
 const timeOut = 20000;
 let direction = Direction.Right;
 
+document.addEventListener("keydown", function(event) {
+    if (event.key == "ArrowUp") {
+      direction = Direction.Up;
+    }
+    if (event.key == "ArrowDown") {
+      direction = Direction.Down;
+    }
+    if (event.key == "ArrowLeft") {
+      direction = Direction.Left;
+    }
+    if (event.key == "ArrowRight") {
+      direction = Direction.Right;
+    }
+});
 
 function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
@@ -47,10 +62,10 @@ while (s < 56){
     ctx.fillStyle = "red";
     ctx.fillRect(food.x, food.y, size, size);
     if (direction == Direction.Up){
-        head.y = head.y + size;
+        head.y = head.y - size;
     }
     if (direction == Direction.Down){
-        head.y = head.y - size;
+        head.y = head.y + size;
     }
     if (direction == Direction.Left){
         head.x = head.x - size;
