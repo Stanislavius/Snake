@@ -6,16 +6,19 @@ return Math.floor(Math.random() * max);
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
-let width = canvas.width;
-let height = canvas.height;
+const width = canvas.width;
+const height = canvas.height;
 const size = 20;
+const cells_width = Math.floor(width / size);
+const cells_height = Math.floor(height / size);
+
 let head = {
-    x: size + getRandomInt(width - 2 * size),
-    y: size + getRandomInt(height - 2 * size)
+    x: 1 + getRandomInt(cells_width - 2),
+    y: 1 + getRandomInt(cells_height - 2)
 };
 let food = {
-    x: size + getRandomInt(width - 2 * size),
-    y: size + getRandomInt(height- 2 * size)
+    x: 1 + getRandomInt(cells_width - 2),
+    y: 1 + getRandomInt(cells_height - 2)
 };
 
 
@@ -26,7 +29,7 @@ const Direction = {
   Right: 'Right'
 };
 
-const timeOut = 20000;
+let timeOut = 2000;
 let direction = Direction.Right;
 
 document.addEventListener("keydown", function(event) {
@@ -48,33 +51,39 @@ function sleep (time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-let s = 24;
-
-async function main_loop(){
-while (s < 56){
-    s = s + 1;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "blue";
-    ctx.strokeRect(0, 0, width, height);
+    ctx.strokeRect(0, 0, cells_width * size, cells_height * size);
 
     ctx.fillStyle = "green";
-    ctx.fillRect(head.x, head.y, size, size);
+    ctx.fillRect(head.x * size, head.y * size, size, size);
     ctx.fillStyle = "red";
-    ctx.fillRect(food.x, food.y, size, size);
+    ctx.fillRect(food.x*size, food.y*size, size, size);
+
+async function main_loop(){
+while (true){
     if (direction == Direction.Up){
-        head.y = head.y - size;
+        head.y = head.y - 1;
     }
     if (direction == Direction.Down){
-        head.y = head.y + size;
+        head.y = head.y + 1;
     }
     if (direction == Direction.Left){
-        head.x = head.x - size;
+        head.x = head.x - 1;
     }
     if (direction == Direction.Right){
-        head.x = head.x + size;
+        head.x = head.x + 1;
     }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "blue";
+    ctx.strokeRect(0, 0, cells_width * size, cells_height * size);
+
+    ctx.fillStyle = "green";
+    ctx.fillRect(head.x * size, head.y * size, size, size);
+    ctx.fillStyle = "red";
+    ctx.fillRect(food.x*size, food.y*size, size, size);
     const timer = ms => new Promise(res => setTimeout(res, ms))
-    await timer(1000);
+    await timer(timeOut);
     console.log("move");
     console.log(direction);
 }
