@@ -116,9 +116,31 @@ async function main_loop(){
         }
         if (head.x == food.x && head.y == food.y){
             console.log("Met food");
+            let new_food_x = 1 + getRandomInt(cells_width - 2);
+            let new_food_y = 1 + getRandomInt(cells_width - 2);
+            let flag = true;
+            while (flag){
+                if (head.x == new_food_x && head.y == new_food_y){
+                    new_food_x = 1 + getRandomInt(cells_width - 2);
+                    new_food_y = 1 + getRandomInt(cells_width - 2);
+                    flag = true;
+                }
+                else{
+                    flag = false
+                    for (const element of body) {
+                        if (element.x == new_food_x && element.y == new_food_y){
+                            flag = true;
+                        }
+                    }
+                    if (flag){
+                        new_food_x = 1 + getRandomInt(cells_width - 2);
+                        new_food_y = 1 + getRandomInt(cells_width - 2);
+                    }
+                }
+            }
             food = {
-                x: 1 + getRandomInt(cells_width - 2),
-                y: 1 + getRandomInt(cells_height - 2)
+                x: new_food_x,
+                y: new_food_y
             };
             body.unshift({
                 x:tail_x,
