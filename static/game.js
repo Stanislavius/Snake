@@ -36,7 +36,7 @@ const Direction = {
   Right: 'Right'
 };
 
-let timeOut = 2000;
+let timeOut = 1000;
 let direction = Direction.Right;
 
 document.addEventListener("keydown", function(event) {
@@ -66,13 +66,27 @@ ctx.fillStyle = "green";
 ctx.fillRect(head.x * size, head.y * size, size, size);
 ctx.fillStyle = "red";
 ctx.fillRect(food.x*size, food.y*size, size, size);
-
+body = []
+let tail_x = -1;
+let tail_y = -1;
+let last_x = -1;
+let last_y = -1;
 async function main_loop(){
     while (true){
         const timer = ms => new Promise(res => setTimeout(res, ms))
         await timer(timeOut);
         console.log("move");
         console.log(direction);
+        if (body.length == 0){
+            tail_x = head.x;
+            tail_y = head.y;
+        }
+        else{
+            tail_x = body[0].x;
+            tail_y = body[0].y;
+        }
+        last_x = head.x;
+        last_y = head.y;
         if (direction == Direction.Up){
             head.y = head.y - 1;
         }
@@ -85,17 +99,33 @@ async function main_loop(){
         if (direction == Direction.Right){
             head.x = head.x + 1;
         }
+
         if (head.x < 0 | head.x >= cells_width | head.y < 0 | head.x >= cells_height){
             console.log("Game over");
             return;
         }
+        if (body.length == 0){
+
+        }
+        else{
+            body = body.slice(1);
+            body.push({
+                x:last_x,
+                y:last_y
+            });
+        }
         if (head.x == food.x && head.y == food.y){
+            console.log("Met food");
             food = {
                 x: 1 + getRandomInt(cells_width - 2),
                 y: 1 + getRandomInt(cells_height - 2)
             };
+            body.unshift({
+                x:tail_x,
+                y:tail_y
+            });
             //change size, check if not collisions, check to gen not inside of snake
-            timeOut = timeout * 0.95;
+            timeOut = timeOut * 0.95;
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "blue";
@@ -103,6 +133,9 @@ async function main_loop(){
 
         ctx.fillStyle = "green";
         ctx.fillRect(head.x * size, head.y * size, size, size);
+        for (const element of body) {
+            ctx.fillRect(element.x * size, element.y * size, size, size);
+        }
         ctx.fillStyle = "red";
         ctx.fillRect(food.x*size, food.y*size, size, size);
     }
