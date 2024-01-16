@@ -16,9 +16,16 @@ let head = {
     x: 1 + getRandomInt(cells_width - 2),
     y: 1 + getRandomInt(cells_height - 2)
 };
+
+let x = head.x;
+let y = head.y;
+while(x == head.x && y == head.y){
+    x = 1 + getRandomInt(cells_width - 2);
+    y = 1 + getRandomInt(cells_height - 2);
+}
 let food = {
-    x: 1 + getRandomInt(cells_width - 2),
-    y: 1 + getRandomInt(cells_height - 2)
+    x: x,
+    y: y
 };
 
 
@@ -77,6 +84,18 @@ async function main_loop(){
         }
         if (direction == Direction.Right){
             head.x = head.x + 1;
+        }
+        if (head.x < 0 | head.x >= cells_width | head.y < 0 | head.x >= cells_height){
+            console.log("Game over");
+            return;
+        }
+        if (head.x == food.x && head.y == food.y){
+            food = {
+                x: 1 + getRandomInt(cells_width - 2),
+                y: 1 + getRandomInt(cells_height - 2)
+            };
+            //change size, check if not collisions, check to gen not inside of snake
+            timeOut = timeout * 0.95;
         }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "blue";
