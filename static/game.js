@@ -149,6 +149,14 @@ async function main_loop(){
             //change size, check if not collisions, check to gen not inside of snake
             timeOut = timeOut * 0.95;
         }
+        for (const element of body) {
+                if (element.x == head.x && element.y == head.y){
+                console.log("Game over, collide with body");
+                console.log(body);
+                console.log(head);
+                return;
+            }
+        }
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = "blue";
         ctx.strokeRect(0, 0, cells_width * size, cells_height * size);
