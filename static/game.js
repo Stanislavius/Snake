@@ -100,7 +100,7 @@ async function main_loop(){
             head.x = head.x + 1;
         }
 
-        if (head.x < 0 | head.x >= cells_width | head.y < 0 | head.x >= cells_height){
+        if (head.x < 0 | head.x >= cells_width | head.y < 0 | head.y >= cells_height){
             console.log("Game over");
             return;
         }
