@@ -48,44 +48,44 @@ document.addEventListener("keydown", function(event) {
 });
 
 function sleep (time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
+    return new Promise((resolve) => setTimeout(resolve, time));
 }
 
 ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "blue";
-    ctx.strokeRect(0, 0, cells_width * size, cells_height * size);
+ctx.fillStyle = "blue";
+ctx.strokeRect(0, 0, cells_width * size, cells_height * size);
 
-    ctx.fillStyle = "green";
-    ctx.fillRect(head.x * size, head.y * size, size, size);
-    ctx.fillStyle = "red";
-    ctx.fillRect(food.x*size, food.y*size, size, size);
+ctx.fillStyle = "green";
+ctx.fillRect(head.x * size, head.y * size, size, size);
+ctx.fillStyle = "red";
+ctx.fillRect(food.x*size, food.y*size, size, size);
 
 async function main_loop(){
-while (true){
-    if (direction == Direction.Up){
-        head.y = head.y - 1;
-    }
-    if (direction == Direction.Down){
-        head.y = head.y + 1;
-    }
-    if (direction == Direction.Left){
-        head.x = head.x - 1;
-    }
-    if (direction == Direction.Right){
-        head.x = head.x + 1;
-    }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "blue";
-    ctx.strokeRect(0, 0, cells_width * size, cells_height * size);
+    while (true){
+        const timer = ms => new Promise(res => setTimeout(res, ms))
+        await timer(timeOut);
+        console.log("move");
+        console.log(direction);
+        if (direction == Direction.Up){
+            head.y = head.y - 1;
+        }
+        if (direction == Direction.Down){
+            head.y = head.y + 1;
+        }
+        if (direction == Direction.Left){
+            head.x = head.x - 1;
+        }
+        if (direction == Direction.Right){
+            head.x = head.x + 1;
+        }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "blue";
+        ctx.strokeRect(0, 0, cells_width * size, cells_height * size);
 
-    ctx.fillStyle = "green";
-    ctx.fillRect(head.x * size, head.y * size, size, size);
-    ctx.fillStyle = "red";
-    ctx.fillRect(food.x*size, food.y*size, size, size);
-    const timer = ms => new Promise(res => setTimeout(res, ms))
-    await timer(timeOut);
-    console.log("move");
-    console.log(direction);
-}
+        ctx.fillStyle = "green";
+        ctx.fillRect(head.x * size, head.y * size, size, size);
+        ctx.fillStyle = "red";
+        ctx.fillRect(food.x*size, food.y*size, size, size);
+    }
 }
 main_loop();
