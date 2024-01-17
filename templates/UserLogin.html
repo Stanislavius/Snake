@@ -1,0 +1,8 @@
+<form action="/authorization/" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Sign in">
+</form>
+
+<button  class="sign up" method = "get" type="button"><a href="/authorization/signup">Sign up</button>
+
