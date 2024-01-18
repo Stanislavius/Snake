@@ -6,7 +6,10 @@
         </label>
         <canvas width="600" height="600">
             <link rel = "stylesheet" href = "{% static 'game.css' %}">
-        <script src="{% static 'game.js' %}"> </script>
         </canvas>
+        <button  class="exit" method = "get" type="button"><a href="/authorization/exit"> </a> Log out</button>
+  <button id = "new_game_button" type = "button"> New game </button>
+  <script src="{% static 'game.js' %}"> </script>
     </div>
 </html>
+

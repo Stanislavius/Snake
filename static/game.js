@@ -2,7 +2,50 @@ function getRandomInt(max) {
 return Math.floor(Math.random() * max);
 }
 
+function redraw(){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "blue";
+    ctx.strokeRect(0, 0, cells_width * size, cells_height * size);
 
+    ctx.fillStyle = "green";
+    ctx.fillRect(head.x * size, head.y * size, size, size);
+    for (const element of body) {
+        ctx.fillRect(element.x * size, element.y * size, size, size);
+    }
+    ctx.fillStyle = "red";
+    ctx.fillRect(food.x*size, food.y*size, size, size);
+}
+
+function new_game(){
+    head = {
+    x: 1 + getRandomInt(cells_width - 2),
+    y: 1 + getRandomInt(cells_height - 2)
+    };
+
+    x = head.x;
+    y = head.y;
+    while(x == head.x && y == head.y){
+        x = 1 + getRandomInt(cells_width - 2);
+        y = 1 + getRandomInt(cells_height - 2);
+    }
+    food = {
+        x: x,
+        y: y
+    };
+    direction = Direction.Right;
+    body = [];
+    timeOut = 1000;
+    redraw();
+    game_end = false;
+}
+
+function interrupt_game(){
+    new_game();
+    label.innerText = "Your score is " + (body.length + 1);
+}
+
+const new_game_button = document.getElementById("new_game_button");
+new_game_button.addEventListener("click", interrupt_game);
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
@@ -13,21 +56,12 @@ const cells_width = Math.floor(width / size);
 const cells_height = Math.floor(height / size);
 const label = document.getElementById('infoLabel');
 
-let head = {
-    x: 1 + getRandomInt(cells_width - 2),
-    y: 1 + getRandomInt(cells_height - 2)
-};
+let head;
 
-let x = head.x;
-let y = head.y;
-while(x == head.x && y == head.y){
-    x = 1 + getRandomInt(cells_width - 2);
-    y = 1 + getRandomInt(cells_height - 2);
-}
-let food = {
-    x: x,
-    y: y
-};
+let x;
+let y;
+let food;
+let body;
 
 
 const Direction = {
@@ -37,8 +71,8 @@ const Direction = {
   Right: 'Right'
 };
 
-let timeOut = 1000;
-let direction = Direction.Right;
+let timeOut;
+let direction;
 
 document.addEventListener("keydown", function(event) {
     if (event.key == "ArrowUp") {
@@ -59,23 +93,16 @@ function sleep (time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-ctx.clearRect(0, 0, canvas.width, canvas.height);
-ctx.fillStyle = "blue";
-ctx.strokeRect(0, 0, cells_width * size, cells_height * size);
 
-ctx.fillStyle = "green";
-ctx.fillRect(head.x * size, head.y * size, size, size);
-ctx.fillStyle = "red";
-ctx.fillRect(food.x*size, food.y*size, size, size);
-body = []
 let tail_x = -1;
 let tail_y = -1;
 let last_x = -1;
 let last_y = -1;
+let game_end = false;
+new_game();
+const timer = ms => new Promise(res => setTimeout(res, ms))
 async function main_loop(){
-    while (true){
-        const timer = ms => new Promise(res => setTimeout(res, ms))
-        await timer(timeOut);
+    if (game_end == false){
         console.log("move");
         console.log(direction);
         if (body.length == 0){
@@ -104,6 +131,7 @@ async function main_loop(){
         if (head.x < 0 | head.x >= cells_width | head.y < 0 | head.y >= cells_height){
             label.innerText = "Game over, your score is " + (body.length + 1);
             console.log("Game over, outside game field");
+            game_end = true;
             return;
         }
         if (body.length == 0){
@@ -158,20 +186,11 @@ async function main_loop(){
                 label.innerText = "Game over, your score is " + (body.length + 1);
                 console.log(body);
                 console.log(head);
+                game_end = true;
                 return;
             }
         }
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "blue";
-        ctx.strokeRect(0, 0, cells_width * size, cells_height * size);
-
-        ctx.fillStyle = "green";
-        ctx.fillRect(head.x * size, head.y * size, size, size);
-        for (const element of body) {
-            ctx.fillRect(element.x * size, element.y * size, size, size);
-        }
-        ctx.fillStyle = "red";
-        ctx.fillRect(food.x*size, food.y*size, size, size);
+        redraw();
     }
 }
-main_loop();
+var timerId = setInterval(main_loop, timeOut);
