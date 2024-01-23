@@ -44,6 +44,31 @@ function interrupt_game(){
     label.innerText = "Your score is " + (body.length + 1);
 }
 
+const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/snake_game/');
+
+function sendMessage(message) {
+        chatSocket.send(JSON.stringify({
+            'message': message
+        }));
+    }
+
+function saveScore(score){
+chatSocket.send(JSON.stringify({
+            'score': score
+        }));
+}
+
+chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const message = data['message'];
+        // Handle incoming message
+    };
+
+ chatSocket.onclose = function(e) {
+        console.error('Socket closed unexpectedly');
+    };
+
+
 const new_game_button = document.getElementById("new_game_button");
 new_game_button.addEventListener("click", interrupt_game);
 
@@ -101,6 +126,7 @@ let last_y = -1;
 let game_end = false;
 new_game();
 const timer = ms => new Promise(res => setTimeout(res, ms))
+
 async function main_loop(){
     if (game_end == false){
         console.log("move");
@@ -118,6 +144,7 @@ async function main_loop(){
         if (direction == Direction.Up){
             head.y = head.y - 1;
         }
+
         if (direction == Direction.Down){
             head.y = head.y + 1;
         }
@@ -130,6 +157,7 @@ async function main_loop(){
 
         if (head.x < 0 | head.x >= cells_width | head.y < 0 | head.y >= cells_height){
             label.innerText = "Game over, your score is " + (body.length + 1);
+            saveScore(body.length + 1)
             console.log("Game over, outside game field");
             game_end = true;
             return;
@@ -186,11 +214,16 @@ async function main_loop(){
                 label.innerText = "Game over, your score is " + (body.length + 1);
                 console.log(body);
                 console.log(head);
+                saveScore(body.length + 1)
                 game_end = true;
                 return;
             }
         }
         redraw();
+        console.log(document.cookie);
+        console.log(sessionStorage);
+        console.log(sessionStorage.getItem("user"));
     }
 }
+
 var timerId = setInterval(main_loop, timeOut);
