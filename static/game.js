@@ -42,6 +42,8 @@ function new_game(){
 function interrupt_game(){
     new_game();
     label.innerText = "Your score is " + (body.length + 1);
+    clearInterval(timerId);
+    timerId = setInterval(main_loop, timeOut);
 }
 
 const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/snake_game/');
@@ -206,6 +208,8 @@ async function main_loop(){
             });
             //change size, check if not collisions, check to gen not inside of snake
             timeOut = timeOut * 0.95;
+            clearInterval(timerId);
+            timerId = setInterval(main_loop, timeOut);
             label.innerText = "Your score is " + (body.length + 1);
         }
         for (const element of body) {
