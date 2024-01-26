@@ -17,6 +17,9 @@ def index(request):
                 if User.objects.filter(user = user,password = password).exists():
                     request.session['user'] = user
                     return redirect("game:game")
+                return HttpResponse("Wrong password")
+            else:
+                return HttpResponse("No such user")
     else:
         form =  UserLoginForm()
         return render(request, "UserLogin.html", {"form": form})
@@ -32,6 +35,8 @@ def signup(request):
             record.save()
             request.session['user'] = user
             return redirect("game:game")
+        else:
+            return HttpResponse("You can not sign up as this user: user already exists")
     else:
         form = UserLoginForm()
         return render(request, "registration.html", {"form": form})
