@@ -1,9 +1,14 @@
 import json
+import threading
+
 from channels.generic.websocket import WebsocketConsumer
 from authorization.models import Score
 from django.contrib.sessions.models import Session
 from django.conf import settings
 from importlib import import_module
+
+from snake_game.gameDriver import Game
+
 
 class GameConsumer(WebsocketConsumer):
     def connect(self):
@@ -12,20 +17,26 @@ class GameConsumer(WebsocketConsumer):
         pass
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        session_key = self.scope['headers'][10][1].decode("utf-8")
-        session_key = session_key[session_key.find("sessionid=")+len("sessionid="):]
-        engine = import_module(settings.SESSION_ENGINE)
-        sessionstore = engine.SessionStore
-        session = sessionstore(session_key)
-        if 'score' in text_data_json:
-            user = session['user']
-            record = Score(user=user, score = int(text_data_json['score']))
-            record.save()
-            print("Add score to database")
-        else:
-            message = text_data_json['message']
-            print(message)
-            self.send(text_data=json.dumps({
-                'message': message
-            }))
+        print("Received")
+        print(text_data_json)
+        if 'start_game' in text_data_json:
+            self.x_max = int(text_data_json["x"])
+            self.y_max = int(text_data_json["y"])
+            self.game = Game(self.x_max, self.y_max)
+            self.game.setGameConsumer(self)
+            self.thread = threading.Thread(target=self.game.main_loop)
+            self.thread.start()
+        if 'direction' in text_data_json:
+            self.game.changeDirection(text_data_json['direction'])
+        if 'new_game' in text_data_json:
+            self.game.end()
+            self.game = Game(self.x_max, self.y_max)
+            self.game.setGameConsumer(self)
+            self.send_label("Score is 1")
+            self.thread = threading.Thread(target=self.game.main_loop)
+            self.thread.start()
+
+    def send_label(self, label):
+        what_to_send = json.dumps({"label":label})
+        self.send(what_to_send)
 
