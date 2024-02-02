@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name = "index"),
     path("snake_game/", include("snake_game.urls"), name = "game"),
-    path("authorization/", include("authorization.urls"), name = "authorization")
+    path("authorization/", include("authorization.urls"), name = "authorization"),
+    path("cabinet/", include("cabinet.urls"), name = "cabinet")
 ]

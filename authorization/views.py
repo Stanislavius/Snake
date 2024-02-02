@@ -48,7 +48,7 @@ def exit(request):
 
 def show_scores(request):
     MODEL_HEADERS=[f.name for f in Score._meta.get_fields()]
-    query_results = [list(i.values()) for i in list(Score.objects.all().values())]
+    query_results = [list(i.values()) for i in list(Score.objects.all().order_by('-score').values())]
     return render(request, "Scores_show.html", {
             "query_results" : query_results,
             "model_headers" : MODEL_HEADERS
