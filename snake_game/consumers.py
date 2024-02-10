@@ -22,14 +22,11 @@ class GameConsumer(WebsocketConsumer):
         if 'start_game' in text_data_json:
             self.x_max = int(text_data_json["x"])
             self.y_max = int(text_data_json["y"])
-            self.game = Game(self.x_max, self.y_max)
-            self.game.setGameConsumer(self)
-            self.thread = threading.Thread(target=self.game.main_loop)
-            self.thread.start()
         if 'direction' in text_data_json:
             self.game.changeDirection(text_data_json['direction'])
         if 'new_game' in text_data_json:
-            self.game.end()
+            if "game" in self.__dict__:
+                self.game.end()
             self.game = Game(self.x_max, self.y_max)
             self.game.setGameConsumer(self)
             self.send_label("Score is 1")
