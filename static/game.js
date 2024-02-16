@@ -58,6 +58,9 @@ chatSocket.onmessage = function(e) {
         if ("label" in data) {
             label.innerText = data.label;
         }
+         if ("status" in data) {
+            label.innerText = label.innerText + " "+ status;
+        }
         redraw();
     };
 
@@ -69,9 +72,27 @@ chatSocket.onopen = function(e){
     start_game(cells_width, cells_height)
 };
 
+function compete(){
+    chatSocket.send(JSON.stringify({
+            'compete': "compete"
+        }));
+    if (seek == 0){
+    seek = 1;
+    label.innerText = "Seeking game";
+    }
+    else{
+    label.innerText = "Game is not started yet.";
+    seek = 0;
+    }
+
+}
+
 
 const new_game_button = document.getElementById("new_game_button");
 new_game_button.addEventListener("click", interrupt_game);
+
+const compete_button = document.getElementById("compete_button");
+compete_button.addEventListener("click", compete);
 
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
@@ -81,6 +102,8 @@ const size = 20;
 const cells_width = Math.floor(width / size);
 const cells_height = Math.floor(height / size);
 const label = document.getElementById('infoLabel');
+let seek;
+seek = 0;
 let head;
 let body;
 let food;

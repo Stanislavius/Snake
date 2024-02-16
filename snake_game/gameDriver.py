@@ -116,7 +116,10 @@ class Game:
         self.direction = new_direction
 
     def send_state(self):
-        state = json.dumps({"head": self.head, "body": self.body, "food": self.food})
+        if "status" in self.__dict__:
+            state = json.dumps({"status":self.status, "head": self.head, "body": self.body, "food": self.food})
+        else:
+            state = json.dumps({"head": self.head, "body": self.body, "food": self.food})
         self.consumer.send(state)
 
     def end(self):

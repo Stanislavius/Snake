@@ -2,12 +2,13 @@
 <html>
     <div>
         <label id="infoLabel">
-            Game started, score is 1
+            Game is not started yet.
         </label>
         <canvas width="600" height="600">
             <link rel = "stylesheet" href = "{% static 'game.css' %}">
         </canvas>
   <button id = "new_game_button" type = "button"> New game </button>
+        <button id = "compete_button" type = "button"> Compete with other players </button>
   <script src="{% static 'game.js' %}"> </script>
     </div>
      <button  id="exit_button" method = "get" type="button"><a href="/authorization/exit">  Log out</button>
