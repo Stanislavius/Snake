@@ -1,51 +1,53 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 
 from .models import User, Score
 from .forms import UserLoginForm
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 def index(request):
-    print(request.session)
-    if "user" in request.session:
+    if 'next' in request.GET and request.GET['next'] != "":
+        return HttpResponseRedirect(request.GET['next'])
+    if request.user.is_authenticated:
         return redirect("game:game")
     if request.method == "POST":
         form = UserLoginForm(request.POST)
         if form.is_valid():
-            user = request.POST['user']
+            username = request.POST['user']
             password = request.POST['password']
-            if User.objects.filter(user = user).exists():
-                if User.objects.filter(user = user,password = password).exists():
-                    request.session['user'] = user
-                    return redirect("game:game")
-                return HttpResponse("Wrong password")
+            user = authenticate(username=username, password=password)
+            print(request.user)
+            print(user)
+            if user is not None:
+                login(request, user)
+                return redirect("game:game")
             else:
-                return HttpResponse("No such user")
+                return HttpResponse("Wrong user or password")
     else:
-        form =  UserLoginForm()
+        form = UserLoginForm()
         return render(request, "UserLogin.html", {"form": form})
 
 def signup(request):
-    if "user" in request.session:
+    if request.user.is_authenticated:
         return redirect("game:game")
     if request.method == "POST":
-        user = request.POST['user']
+        username = request.POST['user']
         password = request.POST['password']
-        if User.objects.filter(user=user).exists() == False:
-            record = User(user=user, password=password)
-            record.save()
-            request.session['user'] = user
-            return redirect("game:game")
-        else:
-            return HttpResponse("You can not sign up as this user: user already exists")
+        user = User.objects.create_user(username, "", password)
+        return redirect("authorization:index")
     else:
         form = UserLoginForm()
         return render(request, "registration.html", {"form": form})
 
 def exit(request):
     print("EXIT")
-    del request.session["user"]
+    logout(request)
     return redirect("authorization:index")
 
+@login_required
 def show_scores(request):
     MODEL_HEADERS=[f.name for f in Score._meta.get_fields()]
     query_results = [list(i.values()) for i in list(Score.objects.all().order_by('-score').values())]

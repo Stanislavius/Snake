@@ -62,6 +62,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+LOGIN_URL = '/authorization/'
+
 ROOT_URLCONF = 'Snake.urls'
 
 TEMPLATES = [
