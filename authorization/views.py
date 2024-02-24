@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 
@@ -9,7 +11,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
 def index(request):
-    if 'next' in request.GET and request.GET['next'] != "":
+    current_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    request.session['last_activity'] = current_time
+    print(request.user)
+    if request.user.is_authenticated == True and 'next' in request.GET and request.GET['next'] != "":
         return HttpResponseRedirect(request.GET['next'])
     if request.user.is_authenticated:
         return redirect("game:game")
@@ -43,7 +48,6 @@ def signup(request):
         return render(request, "registration.html", {"form": form})
 
 def exit(request):
-    print("EXIT")
     logout(request)
     return redirect("authorization:index")
 
