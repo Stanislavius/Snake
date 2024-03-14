@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 
 from .models import User, Score
-from .forms import UserLoginForm
+from .forms import SignInForm, SignUpForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -19,7 +19,7 @@ def index(request):
     if request.user.is_authenticated:
         return redirect("game:game")
     if request.method == "POST":
-        form = UserLoginForm(request.POST)
+        form = SignInForm(request.POST)
         if form.is_valid():
             username = request.POST['user']
             password = request.POST['password']
@@ -32,7 +32,7 @@ def index(request):
             else:
                 return HttpResponse("Wrong user or password")
     else:
-        form = UserLoginForm()
+        form = SignInForm()
         return render(request, "UserLogin.html", {"form": form})
 
 def signup(request):
@@ -41,10 +41,11 @@ def signup(request):
     if request.method == "POST":
         username = request.POST['user']
         password = request.POST['password']
-        user = User.objects.create_user(username, "", password)
+        email = request.POST['email']
+        user = User.objects.create_user(username, email, password)
         return redirect("authorization:index")
     else:
-        form = UserLoginForm()
+        form = SignUpForm()
         return render(request, "registration.html", {"form": form})
 
 def exit(request):
